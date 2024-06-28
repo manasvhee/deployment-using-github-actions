@@ -29,3 +29,13 @@ jobs:
           docker push yuvaraniv/swiggy-new:latest
         env:
           DOCKER_CLI_ACI: 1
+  deploy:
+   needs: build
+   runs-on: [self-hosted]
+   steps:
+      - name: docker pull image
+        run: docker pull yuvaraniv/swiggy-new:latest
+      - name: Image scan
+        run: trivy image yuvaraniv/swiggy-new:latest > trivyimagedeploy.txt
+      - name: Deploy to container
+        run: docker run -d --name new1 -p 3000:3000 yuvaraniv/swiggy-new:latest
